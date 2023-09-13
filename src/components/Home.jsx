@@ -30,7 +30,7 @@ const Home = ({ navigation }) => {
           className="w-screen bg-red-600"
           data={val}
           renderItem={({ item }) => (
-            <View className=" w-full bg-yellow-200">
+            <View className=" w-full bg-red-200">
               <Pressable
                 onPress={() => {
                   navigation.navigate("Messages");
