@@ -6,14 +6,29 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "extra": {
+      "apiKey": "AIzaSyBJMShZ_63JZq44S6NI5qSlITKCpc_1x08",
+      "authDomain": "chatting-f443f.firebaseapp.com",
+      "projectId": "chatting-f443f",
+      "storageBucket": "chatting-f443f.appspot.com",
+      "messagingSenderId": "169604633164",
+      "appId": "1:169604633164:web:8032f7df7a4e1caeae9ae9",
+      "measurementId": "G-JZ789R09Q1"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

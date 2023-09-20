@@ -1,13 +1,20 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import BottomNav from "./src/bottomnav";
+
 import StackNav from "./src/stacknav";
+
 export default function App() {
+  // const analytics = getAnalytics(app);
   return (
+    // <Pressable onPress={sendData}>
+    //   <Text className="mt-20">send</Text>
+    // </Pressable>
+    // <>
+    // <Text  onPress={sendData}></Text>
     <NavigationContainer>
       <StackNav />
     </NavigationContainer>
+    // </>
   );
 }
 

@@ -5,6 +5,7 @@ import Messages from "./components/messages";
 import BottomNav from "./bottomnav";
 import Login from "./components/forms/login";
 import Register from "./components/forms/regis";
+import UserDetails from "./components/forms/userDetails";
 const Stack = createStackNavigator();
 const StackNav = () => {
   return (
@@ -17,6 +18,10 @@ const StackNav = () => {
         name="Register"
         options={{ headerShown: false }}
         component={Register}></Stack.Screen>
+      <Stack.Screen
+        name="UserDetails"
+        options={{ headerShown: false }}
+        component={UserDetails}></Stack.Screen>
       <Stack.Screen
         options={{ headerShown: false }}
         name="Stack"
