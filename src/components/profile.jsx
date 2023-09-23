@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { Button } from "react-native";
 import { Image } from "react-native";
@@ -16,7 +17,10 @@ const Profile = ({ navigation }) => {
         <TextInput placeholder="edit name"></TextInput>
         <Button
           title="logout"
-          onPress={() => navigation.navigate("Login")}></Button>
+          onPress={() => {
+            AsyncStorage.removeItem("user");
+            navigation.navigate("Login");
+          }}></Button>
       </View>
     </View>
   );

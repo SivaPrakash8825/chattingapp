@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Text,
   Pressable,
@@ -8,8 +8,15 @@ import {
   Image,
 } from "react-native";
 import Header from "./header/header";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({ navigation }) => {
+  useEffect(() => {
+    const siva = async () => {
+      const val = await AsyncStorage.getItem("user");
+    };
+    siva();
+  }, []);
   const val = [
     {
       id: 1,
@@ -35,7 +42,7 @@ const Home = ({ navigation }) => {
             <View className=" w-full bg-red-200">
               <Pressable
                 onPress={() => {
-                  navigation.navigate("Messages");
+                  navigation.navigate("Messages", { receiverId: item.id });
                 }}
                 className="  px-5 flex-row justify-between items-center w-full py-3 border-b border-black s ">
                 <View className="flex-row items-center">
