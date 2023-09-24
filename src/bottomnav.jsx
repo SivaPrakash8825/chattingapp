@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "./components/Home";
-import Chat from "./components/chat";
+import UserList from "./components/userList";
 import Profile from "./components/profile";
 
 const Tab = createBottomTabNavigator();
@@ -23,7 +23,7 @@ function BottomNav() {
         name="Home"
         options={{ headerShown: false }}
         component={Home}></Tab.Screen>
-      <Tab.Screen name="Chat" component={Chat}></Tab.Screen>
+      <Tab.Screen name="UserList" component={UserList}></Tab.Screen>
       <Tab.Screen name="Profile" component={Profile}></Tab.Screen>
     </Tab.Navigator>
   );

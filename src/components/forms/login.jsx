@@ -1,25 +1,22 @@
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  getAdditionalUserInfo,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 import React, { useEffect, useState } from "react";
 import { TextInput, Button } from "react-native";
 import { View } from "react-native";
 
-import { GetAuth } from "../../../Firebase";
+import { GetAuth, GetFirebase } from "../../../Firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { collection, query, where, getDocs } from "firebase/firestore";
 // import AsyncStorage from "@react-native-community/async-storage";
 
 const Login = ({ navigation }) => {
   const [mail, setMail] = useState("");
   const [pass, setPass] = useState("");
-
+  const userRef = collection(GetFirebase, "userMail");
   useEffect(() => {
     const checkUser = async () => {
       const val = await AsyncStorage.getItem("user");
-      console.log(val);
+
       if (val) {
         navigation.navigate("Stack");
       }
@@ -33,8 +30,16 @@ const Login = ({ navigation }) => {
         "user",
         JSON.stringify({ userId: val.user.uid, userMail: val.user.email })
       );
+      const ques = query(userRef, where("userMail", "==", mail));
+      const ele = await getDocs(ques);
+      const data = [];
+      ele.docs.map((val) => {
+        data.push(val);
+      });
 
-      navigation.navigate("Stack");
+      data.length <= 0
+        ? navigation.navigate("UserDetails")
+        : navigation.navigate("Stack");
     } catch (e) {
       alert(e);
     }

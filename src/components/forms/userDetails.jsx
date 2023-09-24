@@ -1,13 +1,35 @@
 import { View, Text, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { Button } from "react-native";
-
+import { addDoc, collection } from "firebase/firestore";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Pressable } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GetFirebase } from "../../../Firebase";
 const UserDetails = ({ navigation }) => {
   const [image, setImage] = useState(null);
+  const [name, setName] = useState("");
+  const [userDetails, setUserDetails] = useState("");
+  const dataRef = collection(GetFirebase, "userMail");
+  useEffect(() => {
+    const getData = async () => {
+      const val = JSON.parse(await AsyncStorage.getItem("user"));
+      setUserDetails(val);
+    };
+    getData();
+  }, []);
+  const sendData = async () => {
+    console.log(userDetails.userMail);
+    await addDoc(dataRef, {
+      userMail: userDetails.userMail,
+      userName: name,
+      userImage: image,
+      friendList: [],
+    });
+    navigation.navigate("Stack");
+  };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -17,8 +39,6 @@ const UserDetails = ({ navigation }) => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
@@ -47,13 +67,13 @@ const UserDetails = ({ navigation }) => {
       </View>
       <View className="mt-5">
         <TextInput
+          value={name}
+          onChangeText={(e) => {
+            setName(e);
+          }}
           placeholder="enter your name"
           className="w-72 h-14 mb-3 border border-black rounded-2xl pl-5"></TextInput>
-        <Button
-          title="save"
-          onPress={() => {
-            navigation.navigate("Stack");
-          }}></Button>
+        <Button title="save" onPress={sendData}></Button>
       </View>
     </View>
   );

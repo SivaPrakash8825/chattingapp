@@ -10,6 +10,9 @@ import {
   query,
   serverTimestamp,
   orderBy,
+  where,
+  and,
+  or,
 } from "firebase/firestore";
 
 import { Pressable } from "react-native";
@@ -25,8 +28,23 @@ const Messages = ({ navigation, route }) => {
 
   const messageRef = collection(GetFirebase, "Message");
 
-  const getAllData = () => {
-    const quer = query(messageRef, orderBy("arrTime"));
+  const getAllData = async () => {
+    const val = JSON.parse(await AsyncStorage.getItem("user"));
+    // console.log(val);
+    const quer = query(
+      messageRef,
+      or(
+        and(
+          where("senderMail", "==", val.userMail),
+          where("receiverMail", "==", route.params.receiverId)
+        ),
+        and(
+          where("receiverMail", "==", val.userMail),
+          where("senderMail", "==", route.params.receiverId)
+        )
+      )
+      // orderBy("arrTime")
+    );
     onSnapshot(quer, (snapshot) => {
       let data = [];
 
@@ -35,6 +53,7 @@ const Messages = ({ navigation, route }) => {
             data.push(doc.data());
           })
         : [];
+      // console.log(data);
       const len = data.length - 1;
 
       allMsg.length <= 0
@@ -49,6 +68,7 @@ const Messages = ({ navigation, route }) => {
     const getStorageData = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
       setSenderId({ ...val, receiverId: route.params.receiverId });
+      // console.log(route.params.receiverId);
     };
 
     getStorageData();
@@ -61,7 +81,7 @@ const Messages = ({ navigation, route }) => {
       senderMail: sendId.userMail,
       msg: msg,
       arrTime: serverTimestamp(),
-      receiverMail: sendId.receiverId,
+      receiverMail: route.params.receiverId,
     });
     Setmsg("");
   };

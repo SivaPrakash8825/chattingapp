@@ -1,4 +1,3 @@
-import { doc, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { TextInput, Button, Text } from "react-native";
 import { View } from "react-native";
@@ -12,6 +11,7 @@ const Register = ({ navigation }) => {
     conPassword: "",
   });
   const auth = GetAuth;
+
   const Register = async () => {
     try {
       await createUserWithEmailAndPassword(
@@ -19,7 +19,7 @@ const Register = ({ navigation }) => {
         emailPass.email,
         emailPass.password
       );
-      console.log("adsf");
+      alert("register successfully");
     } catch (e) {
       alert(e);
     }
