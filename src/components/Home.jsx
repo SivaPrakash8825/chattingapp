@@ -10,30 +10,42 @@ import {
 import Header from "./header/header";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { GetFirebase } from "../../Firebase";
 
 const Home = ({ navigation }) => {
   const [allUser, setAllUser] = useState([]);
-  const userRef = collection(GetFirebase, "userMail");
+
   const siva = async () => {
     const val = JSON.parse(await AsyncStorage.getItem("user"));
-    const ele = await getDocs(userRef);
+    const userRef = collection(GetFirebase, `user/chat/${val.userMail}`);
+    const ele = await getDocs(query(userRef, orderBy("arrTime", "desc")));
     const arr = [];
     ele.docs.map((data) => {
       // console.log(data.data());
-      data.data().friendList.includes(val.userMail) &&
-      val.userMail != data.data().userMail
-        ? arr.push({ receiverMail: data.data().userMail, ...data.data() })
-        : [];
+
+      data.data().senderMail == val.userMail ? arr.push(data.data()) : [];
     });
     // console.log(arr);
     setAllUser(arr);
   };
   useEffect(() => {
-    onSnapshot(userRef, (snapshot) => {
-      siva();
-    });
+    const setVal = async () => {
+      const val = JSON.parse(await AsyncStorage.getItem("user"));
+      const userRef = collection(GetFirebase, `user/chat/${val.userMail}`);
+      onSnapshot(userRef, (snapshot) => {
+        // console.log("Asdf");
+        siva();
+      });
+    };
+    setVal();
     siva();
   }, []);
 
@@ -50,16 +62,19 @@ const Home = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate("Messages", {
                     receiverId: item.receiverMail,
+                    userImage: item.userImage,
                   });
                 }}
                 className="  px-5 flex-row justify-between items-center w-full py-3 border-b border-black s ">
                 <View className="flex-row items-center">
                   <Image
                     className="w-10 h-10 rounded-full"
-                    source={{ uri: item.userImage }}></Image>
+                    source={{ uri: item.receiverImage }}></Image>
                   <View className="ml-5 ">
-                    <Text className="font-bold text-xl">{item.userName}</Text>
-                    <Text className=" text-[12px]">{item.receiverMail}</Text>
+                    <Text className="font-bold text-xl">
+                      {item.receiverMail}
+                    </Text>
+                    <Text className=" text-[12px]">{item.msg}</Text>
                   </View>
                 </View>
                 <View className=" flex-col justify-center items-center gap-y-2">

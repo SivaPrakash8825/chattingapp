@@ -21,7 +21,7 @@ const UserDetails = ({ navigation }) => {
     getData();
   }, []);
   const sendData = async () => {
-    console.log(userDetails.userMail);
+    // console.log(userDetails.userMail);
     await addDoc(dataRef, {
       userMail: userDetails.userMail,
       userName: name,
