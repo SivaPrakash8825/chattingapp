@@ -22,19 +22,30 @@ import { GetFirebase } from "../../Firebase";
 
 const Home = ({ navigation }) => {
   const [allUser, setAllUser] = useState([]);
+
   const userNameRef = collection(GetFirebase, "userMail");
+
   const siva = async () => {
     const val = JSON.parse(await AsyncStorage.getItem("user"));
+    const friendRef = collection(
+      GetFirebase,
+      `requestList/user/${val.userMail}`
+    );
     const ques = query(userNameRef, where("userMail", "==", val.userMail));
     const ele2 = await getDocs(ques);
+    const allFriends = await getDocs(friendRef);
     const data = [];
+    const FriendsData = [];
     ele2.docs.map((val) => {
       data.push({
         userName: val.data().userName,
         userImage: val.data().userImage,
       });
     });
-    // console.log(data);
+    allFriends.docs.map((val) => {
+      val.data().requestAccepted ? FriendsData.push(val.data()) : null;
+    });
+    // console.log(FriendsData);
     await AsyncStorage.setItem(
       "user",
       JSON.stringify({
@@ -44,21 +55,24 @@ const Home = ({ navigation }) => {
       })
     );
 
-    const userRef = collection(GetFirebase, `user/chat/${val.userMail}`);
-    const ele = await getDocs(query(userRef, orderBy("arrTime", "desc")));
-    const arr = [];
-    ele.docs.map((data) => {
-      // console.log(data.data());
+    // const userRef = collection(GetFirebase, `user/chat/${val.userMail}`);
+    // const ele = await getDocs(query(userRef, orderBy("arrTime", "desc")));
+    // const arr = [];
+    // ele.docs.map((data) => {
+    //   // console.log(data.data());
 
-      data.data().senderMail == val.userMail ? arr.push(data.data()) : [];
-    });
+    //   data.data().senderMail == val.userMail ? arr.push(data.data()) : [];
+    // });
     // console.log(arr);
-    setAllUser(arr);
+    setAllUser(FriendsData);
   };
   useEffect(() => {
     const setVal = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
-      const userRef = collection(GetFirebase, `user/chat/${val.userMail}`);
+      const userRef = collection(
+        GetFirebase,
+        `requestList/user/${val.userMail}`
+      );
       onSnapshot(userRef, (snapshot) => {
         // console.log("Asdf");
         siva();

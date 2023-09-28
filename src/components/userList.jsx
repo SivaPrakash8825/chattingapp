@@ -20,6 +20,7 @@ import {
   and,
   where,
   deleteDoc,
+  or,
 } from "firebase/firestore";
 import { GetFirebase } from "../../Firebase";
 import {
@@ -55,7 +56,8 @@ const UserList = ({ navigation }) => {
 
     ele.docs.map((data, index) => {
       // !data.data().friendList.includes(val.userMail) &&
-      val.userMail != data.data().userMail
+      val.userMail != data.data().userMail &&
+      !data.data().requestStatus.includes(val.userMail)
         ? arr.push({
             id: data.id,
 
@@ -64,10 +66,12 @@ const UserList = ({ navigation }) => {
         : [];
     });
     ele2.docs.map((data) => {
-      arr2.push({
-        id: data.id,
-        ...data.data(),
-      });
+      !data.data().requestAccepted
+        ? arr2.push({
+            id: data.id,
+            ...data.data(),
+          })
+        : [];
     });
     // console.log(arr);
     setRequestList(arr2);
@@ -115,7 +119,7 @@ const UserList = ({ navigation }) => {
     const addValue = async () => {
       friends.push(curUser.userMail);
 
-      console.log(friends);
+      // console.log(friends);
       const val = await updateDoc(doc(GetFirebase, "userMail", id), {
         friendList: friends,
         // requestStatus: requestStatus,
@@ -127,6 +131,8 @@ const UserList = ({ navigation }) => {
         friendName: curUser.userName,
         receiverMail: userName,
         receiverImage: curUser.userImage,
+        requestAccepted: false,
+        msg: null,
       });
     };
 
@@ -134,7 +140,80 @@ const UserList = ({ navigation }) => {
 
     siva();
   };
+  const requestDenied = async () => {};
+  const requestAccepted = async (item) => {
+    // console.log(item);
+    const userRef = collection(GetFirebase, `userMail`);
+    const val = await updateDoc(
+      doc(GetFirebase, `requestList/user/${item.receiverMail}`, item.id),
+      {
+        requestAccepted: true,
 
+        // requestStatus: requestStatus,
+      }
+    );
+    const userChat = collection(
+      GetFirebase,
+      `requestList/user/${item.senderMail}`
+    );
+    const details = await getDocs(
+      query(
+        userChat,
+        and(
+          where("receiverMail", "==", item.senderMail),
+          where("senderMail", "==", item.receiverMail)
+        )
+      )
+    );
+    const arr = [];
+    details.docs.map((data) => {
+      arr.push(data.id);
+    });
+    arr.length <= 0
+      ? await addDoc(userChat, {
+          senderMail: curUser.userMail,
+          arrTime: serverTimestamp(),
+          friendName: curUser.userName,
+          receiverMail: item.receiverMail,
+          receiverImage: curUser.userImage,
+          requestAccepted: true,
+          msg: null,
+        })
+      : await updateDoc(
+          doc(GetFirebase, `requestList/user/${item.senderMail}`, arr[0]),
+          { requestAccepted: true }
+        );
+
+    const data = await getDocs(
+      query(userRef, where("userMail", "==", item.senderMail))
+    );
+
+    const arr2 = [];
+    const arr3 = [];
+    data.docs.map((data) => {
+      arr2.push(data.id);
+      arr3.push(data.data().requestStatus);
+    });
+    const data2 = await getDocs(
+      query(userRef, where("userMail", "==", item.receiverMail))
+    );
+    data2.docs.map((data) => {
+      arr2.push(data.id);
+      // console.log(data.data());
+      arr3.push(data.data().requestStatus);
+    });
+    console.log(arr3);
+    arr2.forEach(async (data, index) => {
+      const val = await updateDoc(doc(GetFirebase, "userMail", data), {
+        requestStatus:
+          index == 0
+            ? [...arr3[0], item.receiverMail]
+            : [...arr3[1], item.senderMail],
+      });
+    });
+    siva();
+    // console.log(arr2);
+  };
   const ContactList = () => {
     return (
       <BottomSheetModalProvider>
@@ -196,17 +275,6 @@ const UserList = ({ navigation }) => {
                 <View
                   key={index}
                   className=" w-full  px-5 flex-row justify-between items-center py-3  bg-red-200 border-b border-black s">
-                  {/* <Pressable
-                    onPress={() => {
-                      addFriend(
-                        item.id,
-                        item.friendList,
-                        item.userMail,
-                        item.userImage,
-                        item.userName
-                      );
-                    }} */}
-                  {/* className="  px-5 flex-row justify-between items-center w-full py-3  "> */}
                   <View className="flex-row items-center">
                     <Image
                       className="w-10 h-10 rounded-full"
@@ -218,13 +286,25 @@ const UserList = ({ navigation }) => {
                     </View>
                   </View>
                   <View className=" flex-row gap-3 justify-center items-center gap-y-2">
-                    {/* <Text className=" text-[12px] text-green-700">2:30 pm</Text> */}
-                    <View className="bg-red-700 w-14 h-14  rounded-full justify-center items-center">
-                      <Icon name="close-sharp" color={"white"} size={25}></Icon>
-                    </View>
-                    <View className="bg-green-700 w-14 h-14  rounded-full justify-center items-center">
-                      <Icon name="checkmark" color={"white"} size={25}></Icon>
-                    </View>
+                    <Pressable
+                      onPress={() => {
+                        requestDenied(item);
+                      }}>
+                      <View className="bg-red-700 w-14 h-14  rounded-full justify-center items-center">
+                        <Icon
+                          name="close-sharp"
+                          color={"white"}
+                          size={25}></Icon>
+                      </View>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => {
+                        requestAccepted(item);
+                      }}>
+                      <View className="bg-green-700 w-14 h-14  rounded-full justify-center items-center">
+                        <Icon name="checkmark" color={"white"} size={25}></Icon>
+                      </View>
+                    </Pressable>
                   </View>
                   {/* </Pressable> */}
                 </View>
