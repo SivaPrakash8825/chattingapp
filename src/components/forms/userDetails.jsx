@@ -27,6 +27,7 @@ const UserDetails = ({ navigation }) => {
       userName: name,
       userImage: image,
       friendList: [],
+      requestStatus: [],
     });
     navigation.navigate("Stack");
   };

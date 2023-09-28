@@ -22,9 +22,28 @@ import { GetFirebase } from "../../Firebase";
 
 const Home = ({ navigation }) => {
   const [allUser, setAllUser] = useState([]);
-
+  const userNameRef = collection(GetFirebase, "userMail");
   const siva = async () => {
     const val = JSON.parse(await AsyncStorage.getItem("user"));
+    const ques = query(userNameRef, where("userMail", "==", val.userMail));
+    const ele2 = await getDocs(ques);
+    const data = [];
+    ele2.docs.map((val) => {
+      data.push({
+        userName: val.data().userName,
+        userImage: val.data().userImage,
+      });
+    });
+    // console.log(data);
+    await AsyncStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...val,
+        userName: data[0].userName,
+        userImage: data[0].userImage,
+      })
+    );
+
     const userRef = collection(GetFirebase, `user/chat/${val.userMail}`);
     const ele = await getDocs(query(userRef, orderBy("arrTime", "desc")));
     const arr = [];
@@ -62,7 +81,7 @@ const Home = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate("Messages", {
                     receiverId: item.receiverMail,
-                    userImage: item.userImage,
+                    userImage: item.receiverImage,
                   });
                 }}
                 className="  px-5 flex-row justify-between items-center w-full py-3 border-b border-black s ">
@@ -71,9 +90,7 @@ const Home = ({ navigation }) => {
                     className="w-10 h-10 rounded-full"
                     source={{ uri: item.receiverImage }}></Image>
                   <View className="ml-5 ">
-                    <Text className="font-bold text-xl">
-                      {item.receiverMail}
-                    </Text>
+                    <Text className="font-bold text-xl">{item.friendName}</Text>
                     <Text className=" text-[12px]">{item.msg}</Text>
                   </View>
                 </View>

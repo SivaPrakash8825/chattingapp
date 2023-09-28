@@ -89,6 +89,10 @@ const Messages = ({ navigation, route }) => {
 
   const sendData = async () => {
     const userChat = collection(GetFirebase, `user/chat/${sendId.userMail}`);
+    const userChat2 = collection(
+      GetFirebase,
+      `user/chat/${params.route.receiverId}`
+    );
     const val = await addDoc(messageRef, {
       senderId: sendId.userId,
       senderMail: sendId.userMail,
@@ -112,13 +116,21 @@ const Messages = ({ navigation, route }) => {
     });
     if (arr.length > 0) {
       await updateDoc(
-        doc(GetFirebase, `user/chat/${sendId.userMail}`, arr[0]),
+        doc(GetFirebase, `user/chat/${route.params.receiverId}`, arr[0]),
         {
           arrTime: serverTimestamp(),
           msg: msg,
         }
       );
+      // await updateDoc(
+      //   doc(GetFirebase, `user/chat/${sendId.userMail}`, arr[0]),
+      //   {
+      //     arrTime: serverTimestamp(),
+      //     msg: msg,
+      //   }
+      // );
     } else {
+      // const userChat2 = collection(GetFirebase, `user/chat/${sendId.userMail}`);
       const ele = await addDoc(userChat, {
         senderMail: sendId.userMail,
         arrTime: serverTimestamp(),
@@ -126,6 +138,13 @@ const Messages = ({ navigation, route }) => {
         receiverImage: route.params.userImage,
         msg: msg,
       });
+      // const ele2 = await addDoc(userChat2, {
+      //   senderMail: sendId.userMail,
+      //   arrTime: serverTimestamp(),
+      //   receiverMail: route.params.receiverId,
+      //   receiverImage: route.params.userImage,
+      //   msg: msg,
+      // });
     }
 
     Setmsg("");

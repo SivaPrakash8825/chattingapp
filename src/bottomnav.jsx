@@ -16,6 +16,7 @@ function BottomNav() {
           height: 60,
           width: "90%",
           left: 20,
+
           borderRadius: 10,
         },
       }}>
