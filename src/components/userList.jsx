@@ -34,7 +34,7 @@ const UserList = ({ navigation }) => {
   const openBottomSheet = () => {
     bottomSheetRef.current?.present();
   };
-
+  const [allUserCopy, setAllUserCopy] = useState([]);
   const [allUser, setAllUser] = useState([]);
   const [requestList, setRequestList] = useState([]);
   const [curUser, setCurUser] = useState("");
@@ -53,8 +53,13 @@ const UserList = ({ navigation }) => {
     const ele2 = await getDocs(requestRef);
     const arr = [];
     const arr2 = [];
-
+    const arr3 = [];
     ele.docs.map((data, index) => {
+      arr3.push({
+        id: data.id,
+
+        ...data.data(),
+      });
       // !data.data().friendList.includes(val.userMail) &&
       val.userMail != data.data().userMail &&
       !data.data().requestStatus.includes(val.userMail)
@@ -73,6 +78,7 @@ const UserList = ({ navigation }) => {
           })
         : [];
     });
+    setAllUserCopy(arr3);
     // console.log(arr);
     setRequestList(arr2);
 
@@ -140,7 +146,32 @@ const UserList = ({ navigation }) => {
 
     siva();
   };
-  const requestDenied = async () => {};
+  const requestDenied = async (item) => {
+    let friends = [];
+    let id = [];
+    // console.log(item);
+    allUserCopy.map((data) => {
+      // console.log(data.userMail);
+      if (item.receiverMail == data.userMail) {
+        console.log("asdfadsfasdf");
+        id.push(data.id);
+        // console.log(data);
+        friends = data.friendList.filter((data) => {
+          return item.senderMail != data;
+        });
+      }
+    });
+    // console.log(friends);
+    await deleteDoc(
+      doc(GetFirebase, `requestList/user/${item.receiverMail}`, item.id)
+    );
+
+    const val = await updateDoc(doc(GetFirebase, "userMail", id[0]), {
+      friendList: friends,
+      // requestStatus: requestStatus,
+    });
+    siva();
+  };
   const requestAccepted = async (item) => {
     // console.log(item);
     const userRef = collection(GetFirebase, `userMail`);
@@ -148,8 +179,6 @@ const UserList = ({ navigation }) => {
       doc(GetFirebase, `requestList/user/${item.receiverMail}`, item.id),
       {
         requestAccepted: true,
-
-        // requestStatus: requestStatus,
       }
     );
     const userChat = collection(
@@ -199,10 +228,10 @@ const UserList = ({ navigation }) => {
     );
     data2.docs.map((data) => {
       arr2.push(data.id);
-      // console.log(data.data());
+
       arr3.push(data.data().requestStatus);
     });
-    console.log(arr3);
+    // console.log(arr3);
     arr2.forEach(async (data, index) => {
       const val = await updateDoc(doc(GetFirebase, "userMail", data), {
         requestStatus:
