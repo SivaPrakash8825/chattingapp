@@ -33,7 +33,9 @@ const Home = ({ navigation }) => {
     );
     const ques = query(userNameRef, where("userMail", "==", val.userMail));
     const ele2 = await getDocs(ques);
-    const allFriends = await getDocs(friendRef);
+    const allFriends = await getDocs(
+      query(friendRef, orderBy("arrTime", "desc"))
+    );
     const data = [];
     const FriendsData = [];
     ele2.docs.map((val) => {
@@ -94,7 +96,7 @@ const Home = ({ navigation }) => {
               <Pressable
                 onPress={() => {
                   navigation.navigate("Messages", {
-                    receiverId: item.receiverMail,
+                    receiverId: item.senderMail,
                     userImage: item.receiverImage,
                   });
                 }}
@@ -109,10 +111,18 @@ const Home = ({ navigation }) => {
                   </View>
                 </View>
                 <View className=" flex-col justify-center items-center gap-y-2">
-                  <Text className=" text-[12px] text-green-700">2:30 pm</Text>
-                  <Text className="bg-green-700 text-white w-5 rounded-full justify-center items-center text-center">
-                    1
-                  </Text>
+                  {item.newMsgCount > 0 ? (
+                    <>
+                      <Text className=" text-[12px] text-green-700">
+                        2:30 pm
+                      </Text>
+                      <Text className="bg-green-700 text-white w-5 rounded-full justify-center items-center text-center">
+                        {item.newMsgCount}
+                      </Text>
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </View>
               </Pressable>
             </View>

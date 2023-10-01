@@ -123,21 +123,25 @@ const UserList = ({ navigation }) => {
       await deleteDoc(doc(GetFirebase, `requestList/user/${userName}`, arr[0]));
     };
     const addValue = async () => {
-      friends.push(curUser.userMail);
+      // console.log("asf");
+      const cur = JSON.parse(await AsyncStorage.getItem("user"));
+      // console.log(cur);
+      friends.push(cur.userMail);
 
-      // console.log(friends);
+      // console.log(cur.userName);
       const val = await updateDoc(doc(GetFirebase, "userMail", id), {
         friendList: friends,
         // requestStatus: requestStatus,
       });
       const userChat = collection(GetFirebase, `requestList/user/${userName}`);
       const ele = await addDoc(userChat, {
-        senderMail: curUser.userMail,
+        senderMail: cur.userMail,
         arrTime: serverTimestamp(),
-        friendName: curUser.userName,
+        friendName: cur.userName,
         receiverMail: userName,
-        receiverImage: curUser.userImage,
+        receiverImage: cur.userImage,
         requestAccepted: false,
+        newMsgCount: 0,
         msg: null,
       });
     };
@@ -153,7 +157,6 @@ const UserList = ({ navigation }) => {
     allUserCopy.map((data) => {
       // console.log(data.userMail);
       if (item.receiverMail == data.userMail) {
-        console.log("asdfadsfasdf");
         id.push(data.id);
         // console.log(data);
         friends = data.friendList.filter((data) => {
@@ -203,9 +206,10 @@ const UserList = ({ navigation }) => {
           senderMail: curUser.userMail,
           arrTime: serverTimestamp(),
           friendName: curUser.userName,
-          receiverMail: item.receiverMail,
+          receiverMail: item.senderMail,
           receiverImage: curUser.userImage,
           requestAccepted: true,
+          newMsgCount: 0,
           msg: null,
         })
       : await updateDoc(

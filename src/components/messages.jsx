@@ -80,19 +80,55 @@ const Messages = ({ navigation, route }) => {
   useEffect(() => {
     const getStorageData = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
-      setSenderId({ ...val, receiverId: route.params.receiverId });
-    };
 
+      setSenderId({ ...val, receiverId: route.params.receiverId });
+      const arr2 = await getDataId();
+      // console.log(route.params.receiverId);
+      // console.log(arr2);
+      await updateDoc(
+        doc(GetFirebase, `requestList/user/${val.userMail}`, arr2[0]),
+        {
+          newMsgCount: 0,
+        }
+      );
+    };
     getStorageData();
     getAllData();
   }, []);
-
+  const getDataId = async () => {
+    const val = JSON.parse(await AsyncStorage.getItem("user"));
+    const userChat = collection(
+      GetFirebase,
+      `requestList/user/${val.userMail}`
+    );
+    const data = await getDocs(
+      query(
+        userChat,
+        or(
+          and(
+            where("receiverMail", "==", val.userMail),
+            where("senderMail", "==", route.params.receiverId)
+          ),
+          and(
+            where("senderMail", "==", val.userMail),
+            where("receiverMail", "==", route.params.receiverId)
+          )
+        )
+      )
+    );
+    let arr = [];
+    data.docs.map((snapshot) => {
+      // console.log(snapshot.data());
+      arr.push(snapshot.id);
+    });
+    return arr;
+  };
   const sendData = async () => {
-    const userChat = collection(GetFirebase, `user/chat/${sendId.userMail}`);
     const userChat2 = collection(
       GetFirebase,
-      `user/chat/${params.route.receiverId}`
+      `requestList/user/${route.params.receiverId}`
     );
+    // console.log(sendId.userMail, route.params.receiverId);
     const val = await addDoc(messageRef, {
       senderId: sendId.userId,
       senderMail: sendId.userMail,
@@ -100,44 +136,59 @@ const Messages = ({ navigation, route }) => {
       arrTime: serverTimestamp(),
       receiverMail: route.params.receiverId,
     });
-    const data = await getDocs(
+
+    const data2 = await getDocs(
       query(
-        userChat,
-        and(
-          where("senderMail", "==", sendId.userMail),
-          where("receiverMail", "==", route.params.receiverId)
+        userChat2,
+        or(
+          and(
+            where("receiverMail", "==", sendId.userMail),
+            where("senderMail", "==", route.params.receiverId)
+          ),
+          and(
+            where("senderMail", "==", sendId.userMail),
+            where("receiverMail", "==", route.params.receiverId)
+          )
         )
       )
     );
-
-    let arr = [];
-    data.docs.map((snapshot) => {
-      arr.push(snapshot.id);
+    const arr2 = [];
+    data2.docs.map((snapshot) => {
+      arr2.push({ id: snapshot.id, count: snapshot.data().newMsgCount });
     });
+
+    let arr = await getDataId();
+
     if (arr.length > 0) {
       await updateDoc(
-        doc(GetFirebase, `user/chat/${route.params.receiverId}`, arr[0]),
+        doc(GetFirebase, `requestList/user/${sendId.userMail}`, arr[0]),
         {
           arrTime: serverTimestamp(),
           msg: msg,
         }
       );
-      // await updateDoc(
-      //   doc(GetFirebase, `user/chat/${sendId.userMail}`, arr[0]),
-      //   {
-      //     arrTime: serverTimestamp(),
-      //     msg: msg,
-      //   }
-      // );
+      await updateDoc(
+        doc(
+          GetFirebase,
+          `requestList/user/${route.params.receiverId}`,
+          arr2[0].id
+        ),
+        {
+          arrTime: serverTimestamp(),
+          msg: msg,
+          newMsgCount: arr2[0].count + 1,
+        }
+      );
     } else {
+      console.log("else");
       // const userChat2 = collection(GetFirebase, `user/chat/${sendId.userMail}`);
-      const ele = await addDoc(userChat, {
-        senderMail: sendId.userMail,
-        arrTime: serverTimestamp(),
-        receiverMail: route.params.receiverId,
-        receiverImage: route.params.userImage,
-        msg: msg,
-      });
+      // const ele = await addDoc(userChat, {
+      //   senderMail: sendId.userMail,
+      //   arrTime: serverTimestamp(),
+      //   receiverMail: route.params.receiverId,
+      //   receiverImage: route.params.userImage,
+      //   msg: msg,
+      // });
       // const ele2 = await addDoc(userChat2, {
       //   senderMail: sendId.userMail,
       //   arrTime: serverTimestamp(),
