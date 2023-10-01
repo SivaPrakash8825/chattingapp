@@ -133,6 +133,7 @@ const Messages = ({ navigation, route }) => {
       senderId: sendId.userId,
       senderMail: sendId.userMail,
       msg: msg,
+      date: null,
       arrTime: serverTimestamp(),
       receiverMail: route.params.receiverId,
     });
@@ -164,6 +165,7 @@ const Messages = ({ navigation, route }) => {
         doc(GetFirebase, `requestList/user/${sendId.userMail}`, arr[0]),
         {
           arrTime: serverTimestamp(),
+          date: new Date(),
           msg: msg,
         }
       );
@@ -176,6 +178,7 @@ const Messages = ({ navigation, route }) => {
         {
           arrTime: serverTimestamp(),
           msg: msg,
+          date: new Date(),
           newMsgCount: arr2[0].count + 1,
         }
       );

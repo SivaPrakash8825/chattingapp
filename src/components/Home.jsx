@@ -39,14 +39,33 @@ const Home = ({ navigation }) => {
     const data = [];
     const FriendsData = [];
     ele2.docs.map((val) => {
+      // console.log(val.data());
       data.push({
         userName: val.data().userName,
         userImage: val.data().userImage,
       });
     });
     allFriends.docs.map((val) => {
-      val.data().requestAccepted ? FriendsData.push(val.data()) : null;
+      // console.log(val.data())
+      const date = new Date(
+        val.data().arrTime.seconds * 1000 +
+          val.data().arrTime.nanoseconds / 1000000
+      );
+
+      // Format the date as a string (you can adjust the format as needed)
+      const formattedDate = date.toLocaleString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      // console.log(val.data());
+      val.data().requestAccepted
+        ? FriendsData.push({ ...val.data(), msgDate: formattedDate })
+        : null;
     });
+
+    console.log(FriendsData);
+
     // console.log(FriendsData);
     await AsyncStorage.setItem(
       "user",
@@ -71,6 +90,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     const setVal = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
+      console.log("asf");
       const userRef = collection(
         GetFirebase,
         `requestList/user/${val.userMail}`
@@ -111,15 +131,16 @@ const Home = ({ navigation }) => {
                   </View>
                 </View>
                 <View className=" flex-col justify-center items-center gap-y-2">
+                  <Text
+                    className={` text-[12px] ${
+                      item.newMsgCount > 0 ? "text-green-700" : "text-black"
+                    } `}>
+                    {item.msgDate}
+                  </Text>
                   {item.newMsgCount > 0 ? (
-                    <>
-                      <Text className=" text-[12px] text-green-700">
-                        2:30 pm
-                      </Text>
-                      <Text className="bg-green-700 text-white w-5 rounded-full justify-center items-center text-center">
-                        {item.newMsgCount}
-                      </Text>
-                    </>
+                    <Text className="bg-green-700 text-white w-5 rounded-full justify-center text-[10px] items-center text-center">
+                      {item.newMsgCount}
+                    </Text>
                   ) : (
                     ""
                   )}
