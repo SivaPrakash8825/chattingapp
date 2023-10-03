@@ -20,3 +20,5 @@ export const GetFirebase = getFirestore(app);
 //   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 // });
 export const GetAuth = getAuth(app);
+
+//android : 301139015174-phh2bkcr9p35cv2ue31pen0rfj1jts88.apps.googleusercontent.com

@@ -13,7 +13,10 @@
       "storageBucket": "chatting-f443f.appspot.com",
       "messagingSenderId": "169604633164",
       "appId": "1:169604633164:web:8032f7df7a4e1caeae9ae9",
-      "measurementId": "G-JZ789R09Q1"
+      "measurementId": "G-JZ789R09Q1",
+      "eas": {
+        "projectId": "4601782c-bc84-47d4-a11b-46629c7d38c4"
+      }
     },
     "plugins": [
       [
@@ -36,10 +39,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.sivaprakash8825.chattingapp2"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme": "chattingapp2"
   }
 }

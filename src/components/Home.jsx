@@ -64,8 +64,6 @@ const Home = ({ navigation }) => {
         : null;
     });
 
-    console.log(FriendsData);
-
     // console.log(FriendsData);
     await AsyncStorage.setItem(
       "user",
@@ -90,7 +88,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     const setVal = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
-      console.log("asf");
+
       const userRef = collection(
         GetFirebase,
         `requestList/user/${val.userMail}`
