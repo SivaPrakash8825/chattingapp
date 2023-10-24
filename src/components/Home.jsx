@@ -128,7 +128,7 @@ const Home = ({ navigation }) => {
                   <View className="ml-5 ">
                     <Text className="font-bold text-xl">{item.friendName}</Text>
                     <Text className=" text-[12px]">
-                      {item.msg == null ? "Let's chat with him" : "siva"}
+                      {item.msg == null ? "Let's chat with him" : item.msg}
                     </Text>
                   </View>
                 </View>
