@@ -7,8 +7,9 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import Icon from "react-native-vector-icons/Ionicons";
 import React, { useEffect, useState } from "react";
-import { Button } from "react-native";
+import { Button, TouchableOpacity } from "react-native";
 import { Image, Text } from "react-native";
 import { View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
@@ -33,27 +34,29 @@ const Profile = ({ navigation }) => {
     getData();
   }, []);
   return (
-    <View className=" w-screen h-screen ">
-      <View className="w-96 h-96 bg-yellw-400">
+    <View className=" w-screen h-screen flex mt-10 items-center ">
+      <View className="w-52 h-52 rounded-full border overflow-hidden bg-yellw-400">
         {/* {UserDetails[0] ? <Text>fasdfadsfsdaf</Text> : <Text>fail</Text>} */}
         <Image
-          className="w-full h-full"
+          className="w-full h-full "
           source={
             UserDetails[0]
               ? { uri: UserDetails[0].userImage }
               : require("../../assets/icon.png")
           }></Image>
       </View>
-      <View>
-        <TextInput
-          value={UserDetails[0] ? UserDetails[0].userName : ""}
-          placeholder="edit name"></TextInput>
-        <Button
-          title="logout"
+      <View className="mt-6 flex items-center">
+        <Text>Name : {UserDetails[0] ? UserDetails[0].userName : ""}</Text>
+        <TouchableOpacity
           onPress={() => {
             AsyncStorage.removeItem("user");
             navigation.navigate("Login");
-          }}></Button>
+          }}>
+          <View className="bg-red-500 rounded-lg mt-2 text-center px-10 py-2 flex justify-center items-center ">
+            <Icon name="arrow-undo-circle" color="black" size={20} />
+            <Text className="font-bold text-[20px] capitalize">logout</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

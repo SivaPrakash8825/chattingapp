@@ -1,6 +1,7 @@
 import Icon from "react-native-vector-icons/Ionicons";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useKeyboard } from "@react-native-community/hooks";
 import { Image, KeyboardAvoidingView, View } from "react-native";
 import {
   addDoc,
@@ -25,6 +26,7 @@ import { Text, TextInput } from "react-native";
 import { GetFirebase } from "../../Firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const Messages = ({ navigation, route }) => {
+  const { keyboardHeight, keyboardShown } = useKeyboard();
   const [msg, Setmsg] = useState("");
   const viewPort = useRef();
   const [sendId, setSenderId] = useState("");
@@ -71,13 +73,10 @@ const Messages = ({ navigation, route }) => {
     });
   };
 
-  // useEffect(() => {
-  //   // console.log(viewPort);
-  //   if (viewPort.current) {
-  //     viewPort.current.scrollToIndex({ index: 3, animated: true });
-  //   }
-  // }, []);
   useEffect(() => {
+    navigation.setOptions({
+      title: `${route.params.friendName}`,
+    });
     const getStorageData = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
 
@@ -184,21 +183,6 @@ const Messages = ({ navigation, route }) => {
       );
     } else {
       console.log("else");
-      // const userChat2 = collection(GetFirebase, `user/chat/${sendId.userMail}`);
-      // const ele = await addDoc(userChat, {
-      //   senderMail: sendId.userMail,
-      //   arrTime: serverTimestamp(),
-      //   receiverMail: route.params.receiverId,
-      //   receiverImage: route.params.userImage,
-      //   msg: msg,
-      // });
-      // const ele2 = await addDoc(userChat2, {
-      //   senderMail: sendId.userMail,
-      //   arrTime: serverTimestamp(),
-      //   receiverMail: route.params.receiverId,
-      //   receiverImage: route.params.userImage,
-      //   msg: msg,
-      // });
     }
 
     Setmsg("");
@@ -218,7 +202,11 @@ const Messages = ({ navigation, route }) => {
             // pagingEnabled
             // horizontal
             // showsHorizontalScrollIndicator={false}
+
             ref={viewPort}
+            contentContainerStyle={{
+              paddingBottom: keyboardShown ? 12 : 0,
+            }}
             onContentSizeChange={() => {
               viewPort.current.scrollToEnd({ animated: true });
             }}>

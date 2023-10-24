@@ -83,6 +83,7 @@ const Home = ({ navigation }) => {
     //   data.data().senderMail == val.userMail ? arr.push(data.data()) : [];
     // });
     // console.log(arr);
+    // console.log(FriendsData);
     setAllUser(FriendsData);
   };
   useEffect(() => {
@@ -115,6 +116,7 @@ const Home = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate("Messages", {
                     receiverId: item.senderMail,
+                    friendName: item.friendName,
                     userImage: item.receiverImage,
                   });
                 }}
@@ -125,7 +127,9 @@ const Home = ({ navigation }) => {
                     source={{ uri: item.receiverImage }}></Image>
                   <View className="ml-5 ">
                     <Text className="font-bold text-xl">{item.friendName}</Text>
-                    <Text className=" text-[12px]">{item.msg}</Text>
+                    <Text className=" text-[12px]">
+                      {item.msg == null ? "Let's chat with him" : "siva"}
+                    </Text>
                   </View>
                 </View>
                 <View className=" flex-col justify-center items-center gap-y-2">
@@ -133,7 +137,7 @@ const Home = ({ navigation }) => {
                     className={` text-[12px] ${
                       item.newMsgCount > 0 ? "text-green-700" : "text-black"
                     } `}>
-                    {item.msgDate}
+                    {item.msgDate == null ? "" : item.msgDate}
                   </Text>
                   {item.newMsgCount > 0 ? (
                     <Text className="bg-green-700 text-white w-5 rounded-full justify-center text-[10px] items-center text-center">
