@@ -27,7 +27,15 @@ const StackNav = () => {
         options={{ headerShown: false }}
         name="Stack"
         component={BottomNav}></Stack.Screen>
-      <Stack.Screen name="Messages" component={Messages} />
+      <Stack.Screen
+        name="Messages"
+        options={{
+          headerStyle: {
+            backgroundColor: "#767ca3",
+          },
+        }}
+        component={Messages}
+      />
     </Stack.Navigator>
   );
 };

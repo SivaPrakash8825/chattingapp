@@ -258,7 +258,7 @@ const UserList = ({ navigation }) => {
             className="w-screen h-auto"
             data={allUser}
             renderItem={({ item, index }) => (
-              <View key={index} className=" w-full bg-red-200">
+              <View key={index} className=" w-full bg-gray-300">
                 <Pressable
                   onPress={() => {
                     addFriend(
@@ -272,9 +272,12 @@ const UserList = ({ navigation }) => {
                   }}
                   className="  px-5 flex-row justify-between items-center w-full py-3 border-b border-black s ">
                   <View className="flex-row items-center">
-                    <Image
-                      className="w-10 h-10 rounded-full"
-                      source={{ uri: item.userImage }}></Image>
+                    <View className="w-10 h-10  rounded-full border overflow-hidden">
+                      <Image
+                        className="w-full h-full"
+                        source={{ uri: item.userImage }}></Image>
+                    </View>
+
                     <View className="ml-5 ">
                       <Text className="font-bold text-lg">{item.userName}</Text>
                     </View>
@@ -299,7 +302,9 @@ const UserList = ({ navigation }) => {
           />
 
           <Pressable onPress={openBottomSheet}>
-            <View className="w-16 h-16 bg-green-700 absolute bottom-40 rounded-full right-5"></View>
+            <View className="w-16 h-16 bg-green-700 absolute justify-center items-center bottom-40 rounded-full right-5">
+              <Icon name="person-add" size={30} color={"white"}></Icon>
+            </View>
           </Pressable>
           <BottomSheetModal ref={bottomSheetRef} index={0} snapPoints={["70%"]}>
             <FlatList
@@ -308,7 +313,7 @@ const UserList = ({ navigation }) => {
               renderItem={({ item, index }) => (
                 <View
                   key={index}
-                  className=" w-full  px-5 flex-row justify-between items-center py-3  bg-red-200 border-b border-black s">
+                  className=" w-full  px-5 flex-row justify-between items-center py-3  bg-gray-300 border-b border-black s">
                   <View className="flex-row items-center">
                     <Image
                       className="w-10 h-10 rounded-full"

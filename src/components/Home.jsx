@@ -108,10 +108,10 @@ const Home = ({ navigation }) => {
       <SafeAreaView>
         <Header />
         <FlatList
-          className="w-screen bg-red-600"
+          className="w-screen "
           data={allUser}
           renderItem={({ item, index }) => (
-            <View key={index} className=" w-full bg-red-200">
+            <View key={index} className=" w-full bg-gray-300">
               <Pressable
                 onPress={() => {
                   navigation.navigate("Messages", {
@@ -122,9 +122,11 @@ const Home = ({ navigation }) => {
                 }}
                 className="  px-5 flex-row justify-between items-center w-full py-3 border-b border-black s ">
                 <View className="flex-row items-center">
-                  <Image
-                    className="w-10 h-10 rounded-full"
-                    source={{ uri: item.receiverImage }}></Image>
+                  <View className="w-10 h-10  rounded-full border overflow-hidden">
+                    <Image
+                      className="w-full h-full"
+                      source={{ uri: item.receiverImage }}></Image>
+                  </View>
                   <View className="ml-5 ">
                     <Text className="font-bold text-xl">{item.friendName}</Text>
                     <Text className=" text-[12px]">

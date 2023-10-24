@@ -1,3 +1,4 @@
+// import { LinearGradient } from "expo-linear-gradient";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -6,7 +7,7 @@ import {
 } from "firebase/auth";
 
 import React, { useEffect, useState } from "react";
-import { TextInput, Button } from "react-native";
+import { TextInput, TouchableOpacity, Text, Image } from "react-native";
 import { View } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
 import * as webBrowser from "expo-web-browser";
@@ -83,33 +84,50 @@ const Login = ({ navigation }) => {
   };
   return (
     <View className="w-screen h-screen justify-center items-center">
-      <View className="w-[80%] h-[30%] bg-blue-500">
+      <View className="w-full h-1/2 absolute -top-40 z-10">
+        <Image
+          className="w-full h-full rounded-br-[120px] rounded-bl-[120px] "
+          source={require("../../../assets/login.jpg")}></Image>
+      </View>
+      <View className="w-[100%] h-[110%] px-5 py-20 gap-y-2 justify-center items-center rounded-lg mt-14 bg-fuchsia-700">
         <TextInput
+          className="w-[90%] bg-white rounded-xl border px-5 py-3"
           value={mail}
-          placeholder="enter the username"
+          placeholder="E-Mail"
           onChangeText={(e) => {
             setMail(e);
           }}></TextInput>
         <TextInput
-          placeholder="enter the password"
+          className="w-[90%] mb-7 bg-white rounded-xl border px-5 py-3"
+          placeholder="Password"
           secureTextEntry={true}
           onChangeText={(e) => {
             setPass(e);
           }}></TextInput>
 
-        <Button
-          title="Login"
+        <TouchableOpacity
+          className="w-[90%] justify-center items-center  py-5 rounded-full bg-purple-700"
           onPress={() => {
             checkAuthor();
-          }}></Button>
-        <Button
-          title="go register page"
-          onPress={() => navigation.navigate("Register")}></Button>
-        <Button
+          }}>
+          <Text className="text-white font-bold ">Login</Text>
+        </TouchableOpacity>
+
+        {/* <LinearGradient
+          // Button Linear Gradient
+          colors={["#4c669f", "#3b5998", "#192f6a"]}>
+          <Text>Sign in with Facebook</Text>
+        </LinearGradient> */}
+        <TouchableOpacity
+          className="w-[90%] justify-center items-center py-5 rounded-full bg-white"
+          onPress={() => navigation.navigate("Register")}>
+          <Text className="text-purple-700 font-bold ">Register</Text>
+        </TouchableOpacity>
+        {/* <Button
           title="go register page"
           onPress={() => {
             promptAsync();
-          }}></Button>
+          }}></Button> */}
       </View>
     </View>
   );
