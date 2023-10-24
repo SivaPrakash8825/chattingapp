@@ -4,7 +4,7 @@
     "slug": "chattingapp2",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon2.jpg",
     "userInterfaceStyle": "light",
     "extra": {
       "apiKey": "AIzaSyBJMShZ_63JZq44S6NI5qSlITKCpc_1x08",
@@ -13,7 +13,10 @@
       "storageBucket": "chatting-f443f.appspot.com",
       "messagingSenderId": "169604633164",
       "appId": "1:169604633164:web:8032f7df7a4e1caeae9ae9",
-      "measurementId": "G-JZ789R09Q1"
+      "measurementId": "G-JZ789R09Q1",
+      "eas": {
+        "projectId": "4601782c-bc84-47d4-a11b-46629c7d38c4"
+      }
     },
     "plugins": [
       [
@@ -24,7 +27,7 @@
       ]
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/loading.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -34,12 +37,16 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/loading.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.sivaprakash8825.chattingapp2"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme": "chattingapp2"
   }
 }

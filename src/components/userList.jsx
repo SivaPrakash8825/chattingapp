@@ -125,7 +125,7 @@ const UserList = ({ navigation }) => {
     const addValue = async () => {
       // console.log("asf");
       const cur = JSON.parse(await AsyncStorage.getItem("user"));
-      console.log(cur);
+      // console.log(cur);
       friends.push(cur.userMail);
 
       // console.log(cur.userName);

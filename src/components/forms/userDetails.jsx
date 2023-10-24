@@ -1,8 +1,9 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { Button } from "react-native";
 import { addDoc, collection } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Pressable } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -11,11 +12,14 @@ import { GetFirebase } from "../../../Firebase";
 const UserDetails = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [userDetails, setUserDetails] = useState("");
   const dataRef = collection(GetFirebase, "userMail");
+
   useEffect(() => {
     const getData = async () => {
       const val = JSON.parse(await AsyncStorage.getItem("user"));
+      // console.log(val);
       setUserDetails(val);
     };
     getData();
@@ -40,13 +44,43 @@ const UserDetails = ({ navigation }) => {
       aspect: [4, 3],
       quality: 1,
     });
-
+    // console.log(result.assets[0]);
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setLoading(true);
+      const storage = getStorage();
+      const reference = ref(
+        storage,
+        `${userDetails.userId}/${result.assets[0].uri.split("/").pop()}`
+      );
+
+      // Read the image file as a Blob
+      const response = await fetch(result.assets[0].uri);
+      const blob = await response.blob();
+
+      // Upload the image using the put method with the Blob
+      uploadBytes(reference, blob)
+        .then((snapshot) => {
+          getDownloadURL(reference).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            setImage(downloadURL);
+            setLoading(false);
+          });
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+        });
     }
   };
   return (
     <View className=" w-screen h-screen justify-center items-center ">
+      {loading ? (
+        <View className="w-full h-[120vh] z-10 absolute flex justify-center items-center top-0">
+          <ActivityIndicator size={"large"} />
+          <View className="w-full h-full bg-red-300 opacity-[0.4] absolute -z-10"></View>
+        </View>
+      ) : (
+        ""
+      )}
       <View className="w-52 relative h-52 border border-black rounded-full ">
         <Pressable
           onPress={pickImage}
@@ -66,6 +100,7 @@ const UserDetails = ({ navigation }) => {
 
         {/* </View> */}
       </View>
+
       <View className="mt-5">
         <TextInput
           value={name}
